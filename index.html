@@ -1,0 +1,616 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Liquid Stars · Client Intake Form</title>
+<style>
+  :root{
+    --bg:#F2F0ED;
+    --line:#D9D5D0;
+    --text:#1A1A1A;
+    --sub:#8A8580;
+    --strong:#000000;
+    --error:#C4442E;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system, BlinkMacSystemFont, "PingFang TC", "Helvetica Neue", Arial, sans-serif;
+    font-size:15px;
+    line-height:1.7;
+  }
+  .mono{font-family:ui-monospace, "SF Mono", Menlo, monospace;}
+  a{color:inherit;}
+
+  /* left nav：跟 chart-intake.html 同款，桌面才顯示；手機維持單欄、不要固定側欄 */
+  #nav{
+    position:fixed;
+    top:0; left:0; bottom:0;
+    width:200px;
+    padding:28px 20px;
+    overflow-y:auto;
+    border-right:1px solid var(--line);
+  }
+  #nav .nav-title{
+    font-size:11px;
+    color:var(--sub);
+    letter-spacing:.08em;
+    margin-bottom:14px;
+  }
+  #nav ul{list-style:none;margin:0;padding:0;}
+  #nav li{margin-bottom:9px;}
+  #nav a{
+    display:flex;align-items:center;gap:8px;
+    text-decoration:none;color:var(--sub);font-size:13px;
+  }
+  #nav a .dot{width:5px;height:5px;border-radius:50%;background:transparent;flex:none;}
+  #nav a.active{color:var(--text);}
+  #nav a.active .dot{background:var(--text);}
+
+  #main{
+    max-width:640px;
+    margin:0 auto;
+    padding:32px 20px 120px;
+  }
+
+  @media (min-width:860px){
+    #main{margin:0 0 0 200px;}
+  }
+  @media (max-width:859px){
+    #nav{display:none;}
+  }
+
+  .sec-title{
+    font-size:17.6px;
+    font-weight:700;
+    color:var(--text);
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    margin:0 0 6px;
+  }
+  section{padding:28px 0;}
+  section + section{border-top:1px solid var(--line);}
+
+  #header-block{border-bottom:1px solid var(--line);padding-bottom:20px;margin-bottom:8px;}
+  .brand-kicker{margin-bottom:12px;}
+  .brand-name{font-size:13px;font-weight:700;letter-spacing:.08em;color:var(--text);}
+  .brand-sub{font-size:19px;letter-spacing:.06em;color:var(--sub);margin-top:2px;}
+  .intro-list{margin:0;padding-left:18px;font-size:13px;color:var(--sub);}
+  .intro-list li{margin-bottom:6px;}
+  .intro-list li:last-child{margin-bottom:0;}
+
+  #banner{
+    display:none;
+    background:var(--bg);
+    border:1px solid var(--error);
+    color:var(--error);
+    font-size:12px;
+    padding:10px 14px;
+    margin:20px 0;
+    cursor:pointer;
+  }
+  #banner.show{display:block;}
+
+  /* field-row: single-line inputs, label left / value right — 同 chart-intake.html */
+  .field-row{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    border-bottom:1px solid var(--line);
+    padding:14px 0;
+    gap:6px 16px;
+  }
+  .field-row label{
+    flex:0 0 180px;
+    color:var(--sub);
+    font-size:13px;
+  }
+  .field-row .field-input{flex:1;min-width:180px;}
+  .field-row input[type=text],
+  .field-row input[type=date],
+  .field-row input[type=time]{
+    width:100%;
+    border:none;
+    background:transparent;
+    font-size:15px;
+    color:var(--text);
+    padding:4px 0;
+    font-family:inherit;
+  }
+  .field-row.field-error{border-bottom-color:var(--error);}
+  .field-row.field-error label{color:var(--error);}
+
+  /* block: 選擇題／長文字，標籤在上方 */
+  .block{padding:22px 0;border-bottom:1px solid var(--line);}
+  .block-title{
+    font-size:13px;color:var(--sub);letter-spacing:.04em;margin-bottom:14px;
+  }
+  .block-hint{font-size:12px;color:var(--sub);margin:-8px 0 12px;}
+  .block.field-error{border-bottom-color:var(--error);}
+  .block.field-error .block-title{color:var(--error);}
+
+  input:focus, textarea:focus{outline:none;border-bottom-color:var(--strong);}
+
+  textarea{
+    width:100%;
+    border:none;border-bottom:1px solid var(--line);
+    background:transparent;
+    font-size:15px;color:var(--text);
+    font-family:inherit;
+    padding:8px 2px;
+    resize:vertical;min-height:64px;line-height:1.7;
+  }
+
+  .radio-list{display:flex;flex-direction:column;gap:14px;}
+  .radio-list label{
+    display:flex;align-items:flex-start;gap:10px;
+    font-size:15px;color:var(--text);cursor:pointer;
+  }
+  .radio-list input[type=radio]{margin-top:3px;width:16px;height:16px;accent-color:var(--strong);flex:none;}
+
+  #q4-block{transition:opacity .15s;}
+
+  button{
+    font-family:inherit;
+    font-size:14px;
+    background:transparent;
+    border:1px solid var(--text);
+    color:var(--text);
+    padding:13px 24px;
+    cursor:pointer;
+    letter-spacing:.03em;
+    width:100%;
+  }
+  button:hover{background:var(--text);color:var(--bg);}
+  button.ghost{border-color:var(--line);color:var(--sub);width:auto;padding:9px 18px;font-size:13px;}
+  button.ghost:hover{background:transparent;border-color:var(--sub);color:var(--text);}
+
+  #btn-submit{margin-top:28px;}
+
+  #result-block{display:none;margin-top:28px;}
+  #result-block.show{display:block;}
+  #result-hint{font-size:13px;color:var(--sub);margin-bottom:8px;}
+  #result-code{
+    width:100%;
+    border:1px solid var(--line);
+    background:transparent;
+    font-family:ui-monospace, "SF Mono", Menlo, monospace;
+    font-size:12px;
+    color:var(--text);
+    padding:12px;
+    line-height:1.6;
+    resize:vertical;
+    min-height:100px;
+  }
+  .result-actions{display:flex;align-items:center;gap:14px;margin-top:10px;flex-wrap:wrap;}
+  #copy-status{font-size:12px;color:var(--sub);}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="nav-title">CLIENT INTAKE</div>
+  <ul id="nav-list"></ul>
+</nav>
+
+<div id="main">
+
+  <div id="header-block">
+    <div class="brand-kicker">
+      <div class="brand-name">LIQUID STARS</div>
+      <div class="brand-sub">Client Intake Form</div>
+    </div>
+    <ul class="intro-list">
+      <li>大約 3 分鐘填完，按最下面的按鈕拿代碼</li>
+      <li>資料只留在你的電腦；代碼請私訊或 Email 傳給我，不要貼公開的地方</li>
+      <li>只談感情婚戀、工作職業，不談健康、壽命、生死</li>
+    </ul>
+  </div>
+
+  <div id="banner"></div>
+
+  <section id="seg1">
+    <div class="sec-title">1 · Birth Data</div>
+
+    <div class="field-row" id="q1-block">
+      <label for="q1-name">1 · 怎麼稱呼你</label>
+      <div class="field-input"><input type="text" id="q1-name"></div>
+    </div>
+
+    <div class="field-row" id="q2-block">
+      <label for="q2-email">2 · Email</label>
+      <div class="field-input"><input type="text" id="q2-email"></div>
+    </div>
+
+    <div class="field-row" id="q3-block">
+      <label for="q3-birthdate">3 · 出生日期</label>
+      <div class="field-input"><input type="date" id="q3-birthdate" class="mono"></div>
+    </div>
+
+    <div class="field-row" id="q4-block">
+      <label for="q4-birthtime">4 · 出生時間</label>
+      <div class="field-input"><input type="time" id="q4-birthtime" class="mono"></div>
+    </div>
+
+    <div class="block" id="q5-block">
+      <div class="block-title">5 · 這個出生時間你怎麼知道的</div>
+      <div class="radio-list" id="q5-radio">
+        <label><input type="radio" name="q5" value="出生證明或母子健康手冊上寫的"> 出生證明或母子健康手冊上寫的</label>
+        <label><input type="radio" name="q5" value="家人記得"> 家人記得</label>
+        <label><input type="radio" name="q5" value="只記得大概時段（早上、下午…）"> 只記得大概時段（早上、下午…）</label>
+        <label><input type="radio" name="q5" value="完全不知道"> 完全不知道</label>
+      </div>
+    </div>
+
+    <div class="field-row" id="q6-block">
+      <label for="q6-birthplace">6 · 出生地點</label>
+      <div class="field-input"><input type="text" id="q6-birthplace" placeholder="台北市大安區，台灣"></div>
+    </div>
+  </section>
+
+  <section id="seg2">
+    <div class="sec-title">2 · Situation</div>
+
+    <div class="block" id="q7-block">
+      <div class="block-title">7 · 這次想問哪一類</div>
+      <div class="radio-list" id="q7-radio">
+        <label><input type="radio" name="q7" value="感情婚戀"> 感情婚戀</label>
+        <label><input type="radio" name="q7" value="工作職業"> 工作職業</label>
+      </div>
+    </div>
+
+    <div class="block" id="q8-block" style="display:none;">
+      <div class="block-title">8 · 目前狀態</div>
+      <div class="radio-list" id="q8-radio"></div>
+    </div>
+
+    <div class="block" id="q9-block">
+      <div class="block-title">9 · 這個狀態持續多久</div>
+      <div class="radio-list" id="q9-radio">
+        <label><input type="radio" name="q9" value="未滿半年"> 未滿半年</label>
+        <label><input type="radio" name="q9" value="半年到一年"> 半年到一年</label>
+        <label><input type="radio" name="q9" value="一到三年"> 一到三年</label>
+        <label><input type="radio" name="q9" value="三年以上"> 三年以上</label>
+        <label><input type="radio" name="q9" value="一直都是這樣"> 一直都是這樣</label>
+      </div>
+    </div>
+  </section>
+
+  <section id="seg3">
+    <div class="sec-title">3 · Concern</div>
+
+    <div class="block" id="q10-block">
+      <div class="block-title">10 · 用你自己的話，說一下現在的狀況</div>
+      <div class="block-hint">2 到 3 句就可以</div>
+      <textarea id="q10-ownwords" rows="3"></textarea>
+    </div>
+
+    <div class="block" id="q11-block">
+      <div class="block-title">11 · 你希望半年後變成什麼樣子</div>
+      <textarea id="q11-goal" rows="3"></textarea>
+    </div>
+
+    <div class="field-row" id="q12-block">
+      <label for="q12-fixeddates">12 · 已定下的時間點</label>
+      <div class="field-input"><input type="text" id="q12-fixeddates" placeholder="沒有就留空"></div>
+    </div>
+
+    <div class="field-row" id="q13-block">
+      <label for="q13-avoid">13 · 不想被提到的</label>
+      <div class="field-input"><input type="text" id="q13-avoid" placeholder="沒有就留空"></div>
+    </div>
+  </section>
+
+  <button id="btn-submit">產生代碼</button>
+
+  <div id="result-block">
+    <div id="result-hint">複製這一段傳給我</div>
+    <textarea id="result-code" class="mono" readonly></textarea>
+    <div class="result-actions">
+      <button class="ghost" id="btn-copy" type="button">複製代碼</button>
+      <span id="copy-status"></span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+
+  var STORAGE_KEY = 'client-intake-draft-v1';
+
+  var Q8_OPTIONS = {
+    '感情婚戀': [
+      '目前單身，想遇到對象',
+      '有對象，但關係卡住',
+      '剛結束一段關係',
+      '穩定交往或已婚，想看未來'
+    ],
+    '工作職業': [
+      '有工作，但想換',
+      '目前沒工作或求職中',
+      '想創業或接案',
+      '工作穩定，想看發展'
+    ]
+  };
+
+  var ISSUE_MAP = {'感情婚戀':'婚戀', '工作職業':'職業'};
+
+  var TEXT_FIELDS = ['q1-name','q2-email','q3-birthdate','q4-birthtime','q6-birthplace','q10-ownwords','q11-goal','q12-fixeddates','q13-avoid'];
+
+  function el(id){ return document.getElementById(id); }
+  function getVal(id){ var e = el(id); return e ? e.value : ''; }
+  function getRadio(name){ var r = document.querySelector('input[name="'+name+'"]:checked'); return r ? r.value : ''; }
+
+  function buildQ8(issue){
+    var host = el('q8-radio');
+    host.innerHTML = '';
+    var opts = Q8_OPTIONS[issue] || [];
+    opts.forEach(function(opt){
+      var label = document.createElement('label');
+      var input = document.createElement('input');
+      input.type = 'radio';
+      input.name = 'q8';
+      input.value = opt;
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(' ' + opt));
+      host.appendChild(label);
+    });
+  }
+
+  el('q7-radio').addEventListener('change', function(){
+    var issue = getRadio('q7');
+    el('q8-block').style.display = issue ? '' : 'none';
+    buildQ8(issue);
+    scheduleSave();
+  });
+
+  el('q5-radio').addEventListener('change', function(){
+    var v = getRadio('q5');
+    el('q4-block').style.opacity = (v === '完全不知道') ? '0.4' : '1';
+    scheduleSave();
+  });
+
+  // ---------- validation (banner style, 同 chart-intake.html) ----------
+
+  function clearFieldErrors(){
+    document.querySelectorAll('.field-error').forEach(function(e){ e.classList.remove('field-error'); });
+  }
+
+  function clearRowError(t){
+    var row = t.closest ? t.closest('.field-row, .block') : null;
+    if(row) row.classList.remove('field-error');
+  }
+
+  function validate(){
+    var missing = [];
+    function need(rowId, ok, label, focusId){
+      if(!ok) missing.push({rowId:rowId, label:label, focusId:focusId});
+    }
+
+    need('q1-block', !!getVal('q1-name').trim(), '怎麼稱呼你', 'q1-name');
+    need('q2-block', !!getVal('q2-email').trim(), 'Email', 'q2-email');
+    need('q3-block', !!getVal('q3-birthdate'), '出生日期', 'q3-birthdate');
+
+    var timeSource = getRadio('q5');
+    need('q5-block', !!timeSource, '出生時間怎麼知道的');
+    if(timeSource !== '完全不知道'){
+      need('q4-block', !!getVal('q4-birthtime'), '出生時間', 'q4-birthtime');
+    }
+
+    need('q6-block', !!getVal('q6-birthplace').trim(), '出生地點', 'q6-birthplace');
+
+    var issue = getRadio('q7');
+    need('q7-block', !!issue, '想問哪一類');
+    if(issue){ need('q8-block', !!getRadio('q8'), '目前狀態'); }
+
+    need('q9-block', !!getRadio('q9'), '持續多久');
+    need('q10-block', !!getVal('q10-ownwords').trim(), '現在的狀況', 'q10-ownwords');
+    need('q11-block', !!getVal('q11-goal').trim(), '半年後的樣子', 'q11-goal');
+
+    return missing;
+  }
+
+  function showBanner(missing){
+    var banner = el('banner');
+    var labels = missing.map(function(m){ return m.label; });
+    banner.textContent = '必填缺 ' + missing.length + ' 項：' + labels.join('、') + '。點這裡跳到第一個。';
+    banner.classList.add('show');
+    banner.onclick = function(){ jumpTo(missing[0]); };
+    missing.forEach(function(m){
+      var row = el(m.rowId);
+      if(row) row.classList.add('field-error');
+    });
+  }
+
+  function hideBanner(){
+    var banner = el('banner');
+    banner.classList.remove('show');
+    banner.textContent = '';
+  }
+
+  function jumpTo(m){
+    var row = el(m.rowId);
+    if(row && row.scrollIntoView) row.scrollIntoView({behavior:'smooth', block:'center'});
+    if(m.focusId){ var f = el(m.focusId); if(f && f.focus) f.focus(); }
+  }
+
+  // ---------- encode (UTF-8 safe base64) ----------
+
+  function encodeLSQ1(obj){
+    var s = JSON.stringify(obj);
+    var b64 = btoa(unescape(encodeURIComponent(s)));
+    return 'LSQ1:' + b64;
+  }
+
+  function buildPayload(){
+    var issue = getRadio('q7');
+    return {
+      v: 1,
+      name: getVal('q1-name').trim(),
+      email: getVal('q2-email').trim(),
+      birthDate: getVal('q3-birthdate'),
+      birthTime: getVal('q4-birthtime'),
+      timeSource: getRadio('q5'),
+      birthPlace: getVal('q6-birthplace').trim(),
+      issue: ISSUE_MAP[issue] || issue,
+      state: getRadio('q8'),
+      duration: getRadio('q9'),
+      ownWords: getVal('q10-ownwords').trim(),
+      goal: getVal('q11-goal').trim(),
+      fixedDates: getVal('q12-fixeddates').trim(),
+      avoid: getVal('q13-avoid').trim()
+    };
+  }
+
+  function handleSubmit(){
+    clearFieldErrors();
+    var missing = validate();
+    if(missing.length > 0){
+      showBanner(missing);
+      jumpTo(missing[0]);
+      el('result-block').classList.remove('show');
+      return;
+    }
+    hideBanner();
+
+    var payload = buildPayload();
+    var code = encodeLSQ1(payload);
+    el('result-code').value = code;
+    el('result-block').classList.add('show');
+    copyCode();
+    el('result-block').scrollIntoView({behavior:'smooth', block:'center'});
+  }
+
+  function copyCode(){
+    var code = el('result-code').value;
+    if(!code) return;
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(code).then(function(){
+        el('copy-status').textContent = '已複製到剪貼簿';
+      }).catch(fallbackCopy);
+    } else {
+      fallbackCopy();
+    }
+  }
+
+  function fallbackCopy(){
+    var ta = el('result-code');
+    ta.focus();
+    ta.select();
+    var ok = false;
+    try{ ok = document.execCommand('copy'); }catch(err){ ok = false; }
+    el('copy-status').textContent = ok ? '已複製到剪貼簿' : '自動複製失敗，請手動選取上面文字複製';
+  }
+
+  el('btn-submit').addEventListener('click', handleSubmit);
+  el('btn-copy').addEventListener('click', copyCode);
+
+  // ---------- autosave (localStorage only) ----------
+
+  var saveTimer = null;
+  function scheduleSave(){
+    if(saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(saveDraft, 400);
+  }
+
+  function saveDraft(){
+    var data = {};
+    TEXT_FIELDS.forEach(function(id){ data[id] = getVal(id); });
+    data.q5 = getRadio('q5');
+    data.q7 = getRadio('q7');
+    data.q8 = getRadio('q8');
+    data.q9 = getRadio('q9');
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }catch(err){}
+  }
+
+  function loadDraft(){
+    var raw;
+    try{ raw = localStorage.getItem(STORAGE_KEY); }catch(err){ return; }
+    if(!raw) return;
+    var data;
+    try{ data = JSON.parse(raw); }catch(err){ return; }
+    if(!data) return;
+
+    TEXT_FIELDS.forEach(function(id){
+      if(data[id] !== undefined){ var e = el(id); if(e) e.value = data[id]; }
+    });
+
+    if(data.q5){
+      var r5 = document.querySelector('input[name="q5"][value="'+data.q5+'"]');
+      if(r5) r5.checked = true;
+      if(data.q5 === '完全不知道') el('q4-block').style.opacity = '0.4';
+    }
+
+    if(data.q7){
+      var r7 = document.querySelector('input[name="q7"][value="'+data.q7+'"]');
+      if(r7) r7.checked = true;
+      el('q8-block').style.display = '';
+      buildQ8(data.q7);
+      if(data.q8){
+        var r8 = document.querySelector('input[name="q8"][value="'+data.q8+'"]');
+        if(r8) r8.checked = true;
+      }
+    }
+
+    if(data.q9){
+      var r9 = document.querySelector('input[name="q9"][value="'+data.q9+'"]');
+      if(r9) r9.checked = true;
+    }
+  }
+
+  document.addEventListener('input', function(e){ clearRowError(e.target); scheduleSave(); });
+  document.addEventListener('change', function(e){ clearRowError(e.target); scheduleSave(); });
+
+  // ---------- left nav + scrollspy（桌面才顯示，同 chart-intake.html）----------
+
+  var NAV_SEGMENTS = [
+    {id:'seg1', label:'1 · Birth Data'},
+    {id:'seg2', label:'2 · Situation'},
+    {id:'seg3', label:'3 · Concern'}
+  ];
+
+  function buildNav(){
+    var ul = el('nav-list');
+    NAV_SEGMENTS.forEach(function(s){
+      var li = document.createElement('li');
+      var a = document.createElement('a');
+      a.href = '#' + s.id;
+      a.dataset.target = s.id;
+      var dot = document.createElement('span');
+      dot.className = 'dot';
+      a.appendChild(dot);
+      a.appendChild(document.createTextNode(s.label));
+      li.appendChild(a);
+      ul.appendChild(li);
+    });
+
+    var links = ul.querySelectorAll('a');
+    var observer = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        var link = ul.querySelector('a[data-target="'+entry.target.id+'"]');
+        if(!link) return;
+        if(entry.isIntersecting){
+          links.forEach(function(l){ l.classList.remove('active'); });
+          link.classList.add('active');
+        }
+      });
+    }, {rootMargin:'-10% 0px -70% 0px', threshold:0});
+
+    NAV_SEGMENTS.forEach(function(s){
+      var sec = el(s.id);
+      if(sec) observer.observe(sec);
+    });
+  }
+
+  buildNav();
+  loadDraft();
+
+})();
+</script>
+
+</body>
+</html>
