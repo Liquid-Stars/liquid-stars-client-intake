@@ -150,8 +150,9 @@
     display:flex;align-items:flex-start;gap:10px;
     font-size:15px;color:var(--text);cursor:pointer;
   }
-  .radio-list input[type=radio]{margin-top:3px;width:16px;height:16px;accent-color:var(--strong);flex:none;}
+  .radio-list input[type=radio], .radio-list input[type=checkbox]{margin-top:3px;width:16px;height:16px;accent-color:var(--strong);flex:none;}
 
+  .q9-sub{font-size:13px;color:var(--sub);margin:4px 0 -4px;}
   #q5-block{transition:opacity .15s;}
 
   #q6-warn{display:none;font-size:14px;color:var(--text);border:1px solid var(--text);padding:12px 14px;margin-top:12px;}
@@ -278,19 +279,14 @@
     <div class="sec-title">2 · Situation</div>
 
     <div class="block" id="q8-block">
-      <div class="block-title">8 · 這次想問哪一類</div>
+      <div class="block-title">8 · 這次想問哪一類（最多選 2 項）</div>
       <div class="radio-list" id="q8-radio">
-        <label><input type="radio" name="q8" value="感情婚戀"> 感情婚戀</label>
-        <label><input type="radio" name="q8" value="工作職業"> 工作職業</label>
-        <label><input type="radio" name="q8" value="錢與房產"> 錢與房產</label>
-        <label><input type="radio" name="q8" value="子女"> 子女</label>
-        <label><input type="radio" name="q8" value="父母"> 父母</label>
-        <label><input type="radio" name="q8" value="手足"> 手足</label>
-        <label><input type="radio" name="q8" value="學歷與學習"> 學歷與學習</label>
-        <label><input type="radio" name="q8" value="健康與體質"> 健康與體質</label>
-        <label><input type="radio" name="q8" value="靈性與修行"> 靈性與修行</label>
-        <label><input type="radio" name="q8" value="國外與遷移"> 國外與遷移</label>
-        <label><input type="radio" name="q8" value="人生方向"> 人生方向</label>
+        <label><input type="checkbox" name="q8" value="感情婚戀"> 感情婚戀</label>
+        <label><input type="checkbox" name="q8" value="工作職業"> 工作職業</label>
+        <label><input type="checkbox" name="q8" value="錢與房產"> 錢與房產</label>
+        <label><input type="checkbox" name="q8" value="學歷與學習"> 學歷與學習</label>
+        <label><input type="checkbox" name="q8" value="健康與體質"> 健康與體質</label>
+        <label><input type="checkbox" name="q8" value="靈性與修行"> 靈性與修行</label>
       </div>
     </div>
 
@@ -375,24 +371,6 @@
       '想買房或買地',
       '想增加收入來源'
     ],
-    '子女': [
-      '想生，還沒有孩子',
-      '正在備孕或求子',
-      '已有孩子，想看親子關係',
-      '還沒決定要不要生'
-    ],
-    '父母': [
-      '想看和父親的關係',
-      '想看和母親的關係',
-      '父母需要我照顧',
-      '想看父母對我的影響'
-    ],
-    '手足': [
-      '想看和兄弟姊妹的關係',
-      '手足之間有衝突',
-      '想看手足能不能幫上忙',
-      '沒有手足，想看這一塊'
-    ],
     '學歷與學習': [
       '在學，想看學業',
       '想進修或考試',
@@ -410,49 +388,57 @@
       '已有固定修行',
       '想找適合自己的方向',
       '遇到瓶頸'
-    ],
-    '國外與遷移': [
-      '想出國念書或工作',
-      '已在國外，想看長期安排',
-      '想搬家或換城市',
-      '想看旅行與遠行'
-    ],
-    '人生方向': [
-      '不知道要往哪走',
-      '想換跑道',
-      '想知道自己的優勢在哪',
-      '穩定中，想看下一階段'
     ]
   };
 
-  var ISSUE_MAP = {'感情婚戀':'婚戀', '工作職業':'職業', '錢與房產':'錢與物', '學歷與學習':'學習', '健康與體質':'健康', '靈性與修行':'靈性', '國外與遷移':'遷移'};
+  var ISSUE_MAP = {'感情婚戀':'婚戀', '工作職業':'職業', '錢與房產':'錢與物', '學歷與學習':'學習', '健康與體質':'健康', '靈性與修行':'靈性'};
 
   var TEXT_FIELDS = ['q1-name','q2-email','q3-birthdate','q5-birthtime','q7-birthplace','q11-ownwords','q12-goal','q13-fixeddates','q14-avoid'];
 
   function el(id){ return document.getElementById(id); }
   function getVal(id){ var e = el(id); return e ? e.value : ''; }
+  function getChecked(name){ return Array.prototype.map.call(document.querySelectorAll('input[name="'+name+'"]:checked'), function(x){ return x.value; }); }
   function getRadio(name){ var r = document.querySelector('input[name="'+name+'"]:checked'); return r ? r.value : ''; }
 
-  function buildQ9(issue){
+  function q9Name(issue){ return 'q9-' + issue; }
+
+  function buildQ9(issues){
     var host = el('q9-radio');
+    var prev = {};
+    issues.forEach(function(i){ prev[i] = getRadio(q9Name(i)); });
     host.innerHTML = '';
-    var opts = Q9_OPTIONS[issue] || [];
-    opts.forEach(function(opt){
-      var label = document.createElement('label');
-      var input = document.createElement('input');
-      input.type = 'radio';
-      input.name = 'q9';
-      input.value = opt;
-      label.appendChild(input);
-      label.appendChild(document.createTextNode(' ' + opt));
-      host.appendChild(label);
+    issues.forEach(function(issue){
+      if(issues.length > 1){
+        var sub = document.createElement('div');
+        sub.className = 'q9-sub';
+        sub.textContent = issue;
+        host.appendChild(sub);
+      }
+      (Q9_OPTIONS[issue] || []).forEach(function(opt){
+        var label = document.createElement('label');
+        var input = document.createElement('input');
+        input.type = 'radio';
+        input.name = q9Name(issue);
+        input.value = opt;
+        if(prev[issue] === opt) input.checked = true;
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(' ' + opt));
+        host.appendChild(label);
+      });
     });
   }
 
+  function syncQ8(){
+    var issues = getChecked('q8');
+    document.querySelectorAll('input[name="q8"]').forEach(function(x){
+      x.disabled = (issues.length >= 2 && !x.checked);
+    });
+    el('q9-block').style.display = issues.length ? '' : 'none';
+    buildQ9(issues);
+  }
+
   el('q8-radio').addEventListener('change', function(){
-    var issue = getRadio('q8');
-    el('q9-block').style.display = issue ? '' : 'none';
-    buildQ9(issue);
+    syncQ8();
     scheduleSave();
   });
 
@@ -493,9 +479,11 @@
 
     need('q7-block', !!getVal('q7-birthplace').trim(), '出生地點', 'q7-birthplace');
 
-    var issue = getRadio('q8');
-    need('q8-block', !!issue, '想問哪一類');
-    if(issue){ need('q9-block', !!getRadio('q9'), '目前狀態'); }
+    var issues = getChecked('q8');
+    need('q8-block', issues.length > 0, '想問哪一類');
+    if(issues.length){
+      need('q9-block', issues.every(function(i){ return !!getRadio(q9Name(i)); }), '目前狀態');
+    }
 
     need('q10-block', !!getRadio('q10'), '持續多久');
     need('q11-block', !!getVal('q11-ownwords').trim(), '現在的狀況', 'q11-ownwords');
@@ -537,7 +525,10 @@
   }
 
   function buildPayload(){
-    var issue = getRadio('q8');
+    var issues = getChecked('q8');
+    var state = issues.length === 1
+      ? getRadio(q9Name(issues[0]))
+      : issues.map(function(i){ return (ISSUE_MAP[i] || i) + '：' + getRadio(q9Name(i)); }).join('；');
     return {
       v: 1,
       name: getVal('q1-name').trim(),
@@ -547,8 +538,8 @@
       birthTime: getVal('q5-birthtime'),
       timeSource: getRadio('q6'),
       birthPlace: getVal('q7-birthplace').trim(),
-      issue: ISSUE_MAP[issue] || issue,
-      state: getRadio('q9'),
+      issue: issues.map(function(i){ return ISSUE_MAP[i] || i; }).join('、'),
+      state: state,
       duration: getRadio('q10'),
       ownWords: getVal('q11-ownwords').trim(),
       goal: getVal('q12-goal').trim(),
@@ -613,8 +604,9 @@
     TEXT_FIELDS.forEach(function(id){ data[id] = getVal(id); });
     data.q4 = getVal('q4-gender');
     data.q6 = getRadio('q6');
-    data.q8 = getRadio('q8');
-    data.q9 = getRadio('q9');
+    data.q8 = getChecked('q8');
+    data.q9 = {};
+    data.q8.forEach(function(i){ data.q9[i] = getRadio(q9Name(i)); });
     data.q10 = getRadio('q10');
     try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }catch(err){}
   }
@@ -640,15 +632,19 @@
       if(data.q6 === '只記得大概時段（早上、下午…）') el('q6-warn').style.display = 'block';
     }
 
-    if(data.q8){
-      var r8 = document.querySelector('input[name="q8"][value="'+data.q8+'"]');
-      if(r8) r8.checked = true;
-      el('q9-block').style.display = '';
-      buildQ9(data.q8);
-      if(data.q9){
-        var r9 = document.querySelector('input[name="q9"][value="'+data.q9+'"]');
+    if(typeof data.q8 === 'string' && data.q8) data.q8 = [data.q8];
+    if(data.q8 && data.q8.length){
+      data.q8.forEach(function(i){
+        var r8 = document.querySelector('input[name="q8"][value="'+i+'"]');
+        if(r8) r8.checked = true;
+      });
+      syncQ8();
+      var q9 = (data.q9 && typeof data.q9 === 'object') ? data.q9 : {};
+      data.q8.forEach(function(i){
+        if(!q9[i]) return;
+        var r9 = document.querySelector('input[name="'+q9Name(i)+'"][value="'+q9[i]+'"]');
         if(r9) r9.checked = true;
-      }
+      });
     }
 
     if(data.q10){
