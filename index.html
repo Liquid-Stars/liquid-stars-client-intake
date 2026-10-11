@@ -111,7 +111,8 @@
   .field-row .field-input{flex:1;min-width:180px;}
   .field-row input[type=text],
   .field-row input[type=date],
-  .field-row input[type=time]{
+  .field-row input[type=time],
+  .field-row select{
     width:100%;
     border:none;
     background:transparent;
@@ -132,7 +133,7 @@
   .block.field-error{border-bottom-color:var(--error);}
   .block.field-error .block-title{color:var(--error);}
 
-  input:focus, textarea:focus{outline:none;border-bottom-color:var(--strong);}
+  input:focus, textarea:focus, select:focus{outline:none;border-bottom-color:var(--strong);}
 
   textarea{
     width:100%;
@@ -151,7 +152,18 @@
   }
   .radio-list input[type=radio]{margin-top:3px;width:16px;height:16px;accent-color:var(--strong);flex:none;}
 
-  #q4-block{transition:opacity .15s;}
+  #q5-block{transition:opacity .15s;}
+
+  #q6-warn{display:none;font-size:14px;color:var(--text);border:1px solid var(--text);padding:12px 14px;margin-top:12px;}
+
+  #warn-note{
+    font-size:13px;
+    color:var(--sub);
+    border:1px solid var(--line);
+    padding:14px 16px;
+    margin:8px 0 24px;
+  }
+  #warn-note strong{color:var(--text);}
 
   button{
     font-family:inherit;
@@ -168,7 +180,7 @@
   button.ghost{border-color:var(--line);color:var(--sub);width:auto;padding:9px 18px;font-size:13px;}
   button.ghost:hover{background:transparent;border-color:var(--sub);color:var(--text);}
 
-  #btn-submit{margin-top:28px;}
+  #btn-submit{margin-top:8px;}
 
   #result-block{display:none;margin-top:28px;}
   #result-block.show{display:block;}
@@ -206,7 +218,6 @@
     <ul class="intro-list">
       <li>大約 3 分鐘填完，按最下面的按鈕拿代碼</li>
       <li>資料只留在你的電腦；代碼請私訊或 Email 傳給我，不要貼公開的地方</li>
-      <li>只談感情婚戀、工作職業，不談健康、壽命、生死</li>
     </ul>
   </div>
 
@@ -231,50 +242,71 @@
     </div>
 
     <div class="field-row" id="q4-block">
-      <label for="q4-birthtime">4 · 出生時間</label>
-      <div class="field-input"><input type="time" id="q4-birthtime" class="mono"></div>
-    </div>
-
-    <div class="block" id="q5-block">
-      <div class="block-title">5 · 這個出生時間你怎麼知道的</div>
-      <div class="radio-list" id="q5-radio">
-        <label><input type="radio" name="q5" value="出生證明或母子健康手冊上寫的"> 出生證明或母子健康手冊上寫的</label>
-        <label><input type="radio" name="q5" value="家人記得"> 家人記得</label>
-        <label><input type="radio" name="q5" value="只記得大概時段（早上、下午…）"> 只記得大概時段（早上、下午…）</label>
-        <label><input type="radio" name="q5" value="完全不知道"> 完全不知道</label>
+      <label for="q4-gender">4 · 性別</label>
+      <div class="field-input">
+        <select id="q4-gender">
+          <option value="">請選擇</option>
+          <option value="女">女</option>
+          <option value="男">男</option>
+        </select>
       </div>
     </div>
 
-    <div class="field-row" id="q6-block">
-      <label for="q6-birthplace">6 · 出生地點</label>
-      <div class="field-input"><input type="text" id="q6-birthplace" placeholder="台北市大安區，台灣"></div>
+    <div class="field-row" id="q5-block">
+      <label for="q5-birthtime">5 · 出生時間</label>
+      <div class="field-input"><input type="time" id="q5-birthtime" class="mono"></div>
+    </div>
+
+    <div class="block" id="q6-block">
+      <div class="block-title">6 · 這個出生時間你怎麼知道的</div>
+      <div class="radio-list" id="q6-radio">
+        <label><input type="radio" name="q6" value="出生證明或母子健康手冊上寫的"> 出生證明或母子健康手冊上寫的</label>
+        <label><input type="radio" name="q6" value="家人記得"> 家人記得</label>
+        <label><input type="radio" name="q6" value="只記得大概時段（早上、下午…）"> 只記得大概時段（早上、下午…）</label>
+        <label><input type="radio" name="q6" value="完全不知道"> 完全不知道</label>
+      </div>
+      <div id="q6-warn"><strong>目前無法接案。</strong>尚未提供生時校正。請先調閱出生證明，確認精確出生時間後再填寫。</div>
+    </div>
+
+    <div class="field-row" id="q7-block">
+      <label for="q7-birthplace">7 · 出生地點</label>
+      <div class="field-input"><input type="text" id="q7-birthplace" placeholder="台北市大安區，台灣"></div>
     </div>
   </section>
 
   <section id="seg2">
     <div class="sec-title">2 · Situation</div>
 
-    <div class="block" id="q7-block">
-      <div class="block-title">7 · 這次想問哪一類</div>
-      <div class="radio-list" id="q7-radio">
-        <label><input type="radio" name="q7" value="感情婚戀"> 感情婚戀</label>
-        <label><input type="radio" name="q7" value="工作職業"> 工作職業</label>
+    <div class="block" id="q8-block">
+      <div class="block-title">8 · 這次想問哪一類</div>
+      <div class="radio-list" id="q8-radio">
+        <label><input type="radio" name="q8" value="感情婚戀"> 感情婚戀</label>
+        <label><input type="radio" name="q8" value="工作職業"> 工作職業</label>
+        <label><input type="radio" name="q8" value="錢與房產"> 錢與房產</label>
+        <label><input type="radio" name="q8" value="子女"> 子女</label>
+        <label><input type="radio" name="q8" value="父母"> 父母</label>
+        <label><input type="radio" name="q8" value="手足"> 手足</label>
+        <label><input type="radio" name="q8" value="學歷與學習"> 學歷與學習</label>
+        <label><input type="radio" name="q8" value="健康與體質"> 健康與體質</label>
+        <label><input type="radio" name="q8" value="靈性與修行"> 靈性與修行</label>
+        <label><input type="radio" name="q8" value="國外與遷移"> 國外與遷移</label>
+        <label><input type="radio" name="q8" value="人生方向"> 人生方向</label>
       </div>
     </div>
 
-    <div class="block" id="q8-block" style="display:none;">
-      <div class="block-title">8 · 目前狀態</div>
-      <div class="radio-list" id="q8-radio"></div>
+    <div class="block" id="q9-block" style="display:none;">
+      <div class="block-title">9 · 目前狀態</div>
+      <div class="radio-list" id="q9-radio"></div>
     </div>
 
-    <div class="block" id="q9-block">
-      <div class="block-title">9 · 這個狀態持續多久</div>
-      <div class="radio-list" id="q9-radio">
-        <label><input type="radio" name="q9" value="未滿半年"> 未滿半年</label>
-        <label><input type="radio" name="q9" value="半年到一年"> 半年到一年</label>
-        <label><input type="radio" name="q9" value="一到三年"> 一到三年</label>
-        <label><input type="radio" name="q9" value="三年以上"> 三年以上</label>
-        <label><input type="radio" name="q9" value="一直都是這樣"> 一直都是這樣</label>
+    <div class="block" id="q10-block">
+      <div class="block-title">10 · 這個狀態持續多久</div>
+      <div class="radio-list" id="q10-radio">
+        <label><input type="radio" name="q10" value="未滿半年"> 未滿半年</label>
+        <label><input type="radio" name="q10" value="半年到一年"> 半年到一年</label>
+        <label><input type="radio" name="q10" value="一到三年"> 一到三年</label>
+        <label><input type="radio" name="q10" value="三年以上"> 三年以上</label>
+        <label><input type="radio" name="q10" value="一直都是這樣"> 一直都是這樣</label>
       </div>
     </div>
   </section>
@@ -282,27 +314,29 @@
   <section id="seg3">
     <div class="sec-title">3 · Concern</div>
 
-    <div class="block" id="q10-block">
-      <div class="block-title">10 · 用你自己的話，說一下現在的狀況</div>
-      <div class="block-hint">2 到 3 句就可以</div>
-      <textarea id="q10-ownwords" rows="3"></textarea>
-    </div>
-
     <div class="block" id="q11-block">
-      <div class="block-title">11 · 你希望半年後變成什麼樣子</div>
-      <textarea id="q11-goal" rows="3"></textarea>
+      <div class="block-title">11 · 用你自己的話，說一下現在的狀況</div>
+      <div class="block-hint">2 到 3 句就可以</div>
+      <textarea id="q11-ownwords" rows="3"></textarea>
     </div>
 
-    <div class="field-row" id="q12-block">
-      <label for="q12-fixeddates">12 · 已定下的時間點</label>
-      <div class="field-input"><input type="text" id="q12-fixeddates" placeholder="沒有就留空"></div>
+    <div class="block" id="q12-block">
+      <div class="block-title">12 · 你希望半年後變成什麼樣子</div>
+      <textarea id="q12-goal" rows="3"></textarea>
     </div>
 
     <div class="field-row" id="q13-block">
-      <label for="q13-avoid">13 · 不想被提到的</label>
-      <div class="field-input"><input type="text" id="q13-avoid" placeholder="沒有就留空"></div>
+      <label for="q13-fixeddates">13 · 已定下的時間點</label>
+      <div class="field-input"><input type="text" id="q13-fixeddates" placeholder="沒有就留空"></div>
+    </div>
+
+    <div class="field-row" id="q14-block">
+      <label for="q14-avoid">14 · 不想被提到的</label>
+      <div class="field-input"><input type="text" id="q14-avoid" placeholder="沒有就留空"></div>
     </div>
   </section>
+
+  <div id="warn-note"><strong>提醒：</strong>這次解盤不談壽命、生死、死因，也不推算孩子的數目與性別。</div>
 
   <button id="btn-submit">產生代碼</button>
 
@@ -322,7 +356,7 @@
 
   var STORAGE_KEY = 'client-intake-draft-v1';
 
-  var Q8_OPTIONS = {
+  var Q9_OPTIONS = {
     '感情婚戀': [
       '目前單身，想遇到對象',
       '有對象，但關係卡住',
@@ -334,26 +368,80 @@
       '目前沒工作或求職中',
       '想創業或接案',
       '工作穩定，想看發展'
+    ],
+    '錢與房產': [
+      '收入不穩，想知道賺不賺得到',
+      '賺得到但存不住',
+      '想買房或買地',
+      '想增加收入來源'
+    ],
+    '子女': [
+      '想生，還沒有孩子',
+      '正在備孕或求子',
+      '已有孩子，想看親子關係',
+      '還沒決定要不要生'
+    ],
+    '父母': [
+      '想看和父親的關係',
+      '想看和母親的關係',
+      '父母需要我照顧',
+      '想看父母對我的影響'
+    ],
+    '手足': [
+      '想看和兄弟姊妹的關係',
+      '手足之間有衝突',
+      '想看手足能不能幫上忙',
+      '沒有手足，想看這一塊'
+    ],
+    '學歷與學習': [
+      '在學，想看學業',
+      '想進修或考試',
+      '想轉換學習方向',
+      '已畢業，想看學習對工作的影響'
+    ],
+    '健康與體質': [
+      '想了解自己的體質',
+      '最近身體常出狀況',
+      '有固定追蹤的問題',
+      '想知道哪段時間要多留意'
+    ],
+    '靈性與修行': [
+      '剛開始接觸',
+      '已有固定修行',
+      '想找適合自己的方向',
+      '遇到瓶頸'
+    ],
+    '國外與遷移': [
+      '想出國念書或工作',
+      '已在國外，想看長期安排',
+      '想搬家或換城市',
+      '想看旅行與遠行'
+    ],
+    '人生方向': [
+      '不知道要往哪走',
+      '想換跑道',
+      '想知道自己的優勢在哪',
+      '穩定中，想看下一階段'
     ]
   };
 
-  var ISSUE_MAP = {'感情婚戀':'婚戀', '工作職業':'職業'};
+  var ISSUE_MAP = {'感情婚戀':'婚戀', '工作職業':'職業', '錢與房產':'錢與物', '學歷與學習':'學習', '健康與體質':'健康', '靈性與修行':'靈性', '國外與遷移':'遷移'};
 
-  var TEXT_FIELDS = ['q1-name','q2-email','q3-birthdate','q4-birthtime','q6-birthplace','q10-ownwords','q11-goal','q12-fixeddates','q13-avoid'];
+  var TEXT_FIELDS = ['q1-name','q2-email','q3-birthdate','q5-birthtime','q7-birthplace','q11-ownwords','q12-goal','q13-fixeddates','q14-avoid'];
 
   function el(id){ return document.getElementById(id); }
   function getVal(id){ var e = el(id); return e ? e.value : ''; }
   function getRadio(name){ var r = document.querySelector('input[name="'+name+'"]:checked'); return r ? r.value : ''; }
 
-  function buildQ8(issue){
-    var host = el('q8-radio');
+  function buildQ9(issue){
+    var host = el('q9-radio');
     host.innerHTML = '';
-    var opts = Q8_OPTIONS[issue] || [];
+    var opts = Q9_OPTIONS[issue] || [];
     opts.forEach(function(opt){
       var label = document.createElement('label');
       var input = document.createElement('input');
       input.type = 'radio';
-      input.name = 'q8';
+      input.name = 'q9';
       input.value = opt;
       label.appendChild(input);
       label.appendChild(document.createTextNode(' ' + opt));
@@ -361,16 +449,17 @@
     });
   }
 
-  el('q7-radio').addEventListener('change', function(){
-    var issue = getRadio('q7');
-    el('q8-block').style.display = issue ? '' : 'none';
-    buildQ8(issue);
+  el('q8-radio').addEventListener('change', function(){
+    var issue = getRadio('q8');
+    el('q9-block').style.display = issue ? '' : 'none';
+    buildQ9(issue);
     scheduleSave();
   });
 
-  el('q5-radio').addEventListener('change', function(){
-    var v = getRadio('q5');
-    el('q4-block').style.opacity = (v === '完全不知道') ? '0.4' : '1';
+  el('q6-radio').addEventListener('change', function(){
+    var v = getRadio('q6');
+    el('q5-block').style.opacity = (v === '完全不知道') ? '0.4' : '1';
+    el('q6-warn').style.display = (v === '只記得大概時段（早上、下午…）') ? 'block' : 'none';
     scheduleSave();
   });
 
@@ -394,22 +483,23 @@
     need('q1-block', !!getVal('q1-name').trim(), '怎麼稱呼你', 'q1-name');
     need('q2-block', !!getVal('q2-email').trim(), 'Email', 'q2-email');
     need('q3-block', !!getVal('q3-birthdate'), '出生日期', 'q3-birthdate');
+    need('q4-block', !!getVal('q4-gender'), '性別', 'q4-gender');
 
-    var timeSource = getRadio('q5');
-    need('q5-block', !!timeSource, '出生時間怎麼知道的');
+    var timeSource = getRadio('q6');
+    need('q6-block', !!timeSource, '出生時間怎麼知道的');
     if(timeSource !== '完全不知道'){
-      need('q4-block', !!getVal('q4-birthtime'), '出生時間', 'q4-birthtime');
+      need('q5-block', !!getVal('q5-birthtime'), '出生時間', 'q5-birthtime');
     }
 
-    need('q6-block', !!getVal('q6-birthplace').trim(), '出生地點', 'q6-birthplace');
+    need('q7-block', !!getVal('q7-birthplace').trim(), '出生地點', 'q7-birthplace');
 
-    var issue = getRadio('q7');
-    need('q7-block', !!issue, '想問哪一類');
-    if(issue){ need('q8-block', !!getRadio('q8'), '目前狀態'); }
+    var issue = getRadio('q8');
+    need('q8-block', !!issue, '想問哪一類');
+    if(issue){ need('q9-block', !!getRadio('q9'), '目前狀態'); }
 
-    need('q9-block', !!getRadio('q9'), '持續多久');
-    need('q10-block', !!getVal('q10-ownwords').trim(), '現在的狀況', 'q10-ownwords');
-    need('q11-block', !!getVal('q11-goal').trim(), '半年後的樣子', 'q11-goal');
+    need('q10-block', !!getRadio('q10'), '持續多久');
+    need('q11-block', !!getVal('q11-ownwords').trim(), '現在的狀況', 'q11-ownwords');
+    need('q12-block', !!getVal('q12-goal').trim(), '半年後的樣子', 'q12-goal');
 
     return missing;
   }
@@ -447,22 +537,23 @@
   }
 
   function buildPayload(){
-    var issue = getRadio('q7');
+    var issue = getRadio('q8');
     return {
       v: 1,
       name: getVal('q1-name').trim(),
       email: getVal('q2-email').trim(),
       birthDate: getVal('q3-birthdate'),
-      birthTime: getVal('q4-birthtime'),
-      timeSource: getRadio('q5'),
-      birthPlace: getVal('q6-birthplace').trim(),
+      gender: getVal('q4-gender'),
+      birthTime: getVal('q5-birthtime'),
+      timeSource: getRadio('q6'),
+      birthPlace: getVal('q7-birthplace').trim(),
       issue: ISSUE_MAP[issue] || issue,
-      state: getRadio('q8'),
-      duration: getRadio('q9'),
-      ownWords: getVal('q10-ownwords').trim(),
-      goal: getVal('q11-goal').trim(),
-      fixedDates: getVal('q12-fixeddates').trim(),
-      avoid: getVal('q13-avoid').trim()
+      state: getRadio('q9'),
+      duration: getRadio('q10'),
+      ownWords: getVal('q11-ownwords').trim(),
+      goal: getVal('q12-goal').trim(),
+      fixedDates: getVal('q13-fixeddates').trim(),
+      avoid: getVal('q14-avoid').trim()
     };
   }
 
@@ -520,10 +611,11 @@
   function saveDraft(){
     var data = {};
     TEXT_FIELDS.forEach(function(id){ data[id] = getVal(id); });
-    data.q5 = getRadio('q5');
-    data.q7 = getRadio('q7');
+    data.q4 = getVal('q4-gender');
+    data.q6 = getRadio('q6');
     data.q8 = getRadio('q8');
     data.q9 = getRadio('q9');
+    data.q10 = getRadio('q10');
     try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }catch(err){}
   }
 
@@ -539,26 +631,29 @@
       if(data[id] !== undefined){ var e = el(id); if(e) e.value = data[id]; }
     });
 
-    if(data.q5){
-      var r5 = document.querySelector('input[name="q5"][value="'+data.q5+'"]');
-      if(r5) r5.checked = true;
-      if(data.q5 === '完全不知道') el('q4-block').style.opacity = '0.4';
+    if(data.q4){ var g = el('q4-gender'); if(g) g.value = data.q4; }
+
+    if(data.q6){
+      var r6 = document.querySelector('input[name="q6"][value="'+data.q6+'"]');
+      if(r6) r6.checked = true;
+      if(data.q6 === '完全不知道') el('q5-block').style.opacity = '0.4';
+      if(data.q6 === '只記得大概時段（早上、下午…）') el('q6-warn').style.display = 'block';
     }
 
-    if(data.q7){
-      var r7 = document.querySelector('input[name="q7"][value="'+data.q7+'"]');
-      if(r7) r7.checked = true;
-      el('q8-block').style.display = '';
-      buildQ8(data.q7);
-      if(data.q8){
-        var r8 = document.querySelector('input[name="q8"][value="'+data.q8+'"]');
-        if(r8) r8.checked = true;
+    if(data.q8){
+      var r8 = document.querySelector('input[name="q8"][value="'+data.q8+'"]');
+      if(r8) r8.checked = true;
+      el('q9-block').style.display = '';
+      buildQ9(data.q8);
+      if(data.q9){
+        var r9 = document.querySelector('input[name="q9"][value="'+data.q9+'"]');
+        if(r9) r9.checked = true;
       }
     }
 
-    if(data.q9){
-      var r9 = document.querySelector('input[name="q9"][value="'+data.q9+'"]');
-      if(r9) r9.checked = true;
+    if(data.q10){
+      var r10 = document.querySelector('input[name="q10"][value="'+data.q10+'"]');
+      if(r10) r10.checked = true;
     }
   }
 
